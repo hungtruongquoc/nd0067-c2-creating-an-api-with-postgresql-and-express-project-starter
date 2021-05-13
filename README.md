@@ -23,7 +23,7 @@ Your application must make use of the following libraries:
 ```dotenv
 POSTGRES_HOST=127.0.0.1
 POSTGRES_DB=full_stack_dev
-POSTGRES_TEST_DB=test
+POSTGRES_TEST_DB=full_stack_test
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=password
 BCRYPT_PASSWORD=randomPassword
