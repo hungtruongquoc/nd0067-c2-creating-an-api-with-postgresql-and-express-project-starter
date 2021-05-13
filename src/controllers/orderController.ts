@@ -3,41 +3,17 @@ import { Application, Request, Response } from "express";
 import verifyAuthToken from "../middlewares/verifyAuthToken";
 const orderStore = new Order();
 
-const createOrder = async (_req: Request, _res: Response) => {
-  const userId = parseInt(_req.params.userId);
+const fetchOrderByUser = async (_req: Request, _res: Response) => {
+  const userId = parseInt(_req.params.id);
   if (!userId) {
     return _res.status(400).send({
       status: "failure",
-      message: "Please send userId in path params"
+      message: "Param order id not found"
     });
   }
-  try {
-    const newOrder = await orderStore.create({
-      user_id: userId
-    });
-    _res.status(200).send({
-      status: "success",
-      data: newOrder
-    });
-  } catch (error) {
-    _res.status(500).send({
-      status: "error",
-      message: error.message
-    });
-  }
-};
 
-const fetchOrder = async (_req: Request, _res: Response) => {
-  const userId = parseInt(_req.params.userId);
-  if (!userId) {
-    return _res.status(400).send({
-      status: "failure",
-      message: "Please send userId in path params"
-    });
-  }
-  const status = Number(_req.query.status);
   try {
-    const orders = await orderStore.showOrdersByUserId(userId, status);
+    const orders = await orderStore.findByUserId(userId);
     _res.status(200).send({
       status: "success",
       data: orders
@@ -50,29 +26,6 @@ const fetchOrder = async (_req: Request, _res: Response) => {
   }
 };
 
-const markAsComplete = async (_req: Request, _res: Response) => {
-  const orderId = parseInt(_req.params.orderId);
-  if (!orderId) {
-    return _res.status(400).send({
-      status: "failure",
-      message: "Please send orderId in path params"
-    });
-  }
-  try {
-    await orderStore.markOrderComplete(orderId);
-    _res.status(200).send({
-      status: "success"
-    });
-  } catch (error) {
-    _res.status(500).send({
-      status: "error",
-      message: error.message
-    });
-  }
-};
-
 export const attachOrderRoutes = (app: Application) => {
-  app.post("/orders/users/:userId", verifyAuthToken, createOrder);
-  app.get("/orders/users/:userId", verifyAuthToken, fetchOrder);
-  app.patch("/orders/:orderId/markAsComplete", verifyAuthToken, markAsComplete);
+  app.get("/orders/user/:id", verifyAuthToken, fetchOrderByUser);
 };
