@@ -36,14 +36,14 @@ describe("Product Controller", () => {
   it('create should return a product', async () => {
     // Creates a user
     const user = await request.post('/users').send({
-      email: "test@abc.com",
+      email: "test@product.com",
       firstName: "test",
       lastName: "test",
       password: "abc"
     });
     expect(user.status).toBe(200);
     // Logs into the system
-    const login = await request.post('/login').send({email: "test@abc.com", password: "abc"});
+    const login = await request.post('/login').send({email: "test@product.com", password: "abc"});
     expect(login.body.token).toBeDefined();
     // Creates a product
     const response = await request.post('/products').send({name: "test", price: 100})

@@ -18,7 +18,7 @@ export class User {
     try {
       const databaseConnection = await Client.connect();
       const usersTable = await databaseConnection.query(
-          "SELECT id, firstname, lastname, email FROM users"
+          "SELECT id, first_name, last_name, email FROM users"
       );
       databaseConnection.release();
       return usersTable.rows;
@@ -81,11 +81,12 @@ export class User {
   async show(id: number): Promise<UserPreview | null> {
     const connection = await Client.connect();
     const usersTable = await connection.query(
-        "SELECT id, firstname, lastname, email FROM users WHERE id=$1",
+        "SELECT id, first_name, last_name, email FROM users WHERE id=$1",
         [id]
     );
     if (usersTable.rowCount > 0) {
-      return usersTable.rows[0];
+      const {id, last_name, first_name, email} = usersTable.rows[0];
+      return {id, firstName: first_name, lastName: last_name, email};
     }
     return null;
   }
