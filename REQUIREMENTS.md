@@ -5,38 +5,66 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ## API Endpoints
 #### Products
-- Index 
-- Show
-- Create [token required]
-- [OPTIONAL] Top 5 most popular products 
-- [OPTIONAL] Products by category (args: product category)
+- Index: `/products [GET]`
+- Show: `/products/:id [GET]`
+- Create [token required]: `/products [POST]`
 
 #### Users
-- Index [token required]
-- Show [token required]
-- Create N[token required]
+- Index [token required]: `/users [GET]`
+- Show [token required]: `/users/:id [GET]`
+- Create: `/users [POST]`
 
 #### Orders
-- Current Order by user (args: user id)[token required]
-- [OPTIONAL] Completed Orders by user (args: user id)[token required]
+- Current Order by user (args: user id)[token required]: `/orders/user/:id`
 
 ## Data Shapes
 #### Product
--  id
+- id
 - name
 - price
-- [OPTIONAL] category
+
+Table:
+
+```
+CREATE TABLE products (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(256) NOT NULL,
+    price INTEGER NOT NULL
+);
+```
 
 #### User
 - id
-- firstName
-- lastName
+- first_name
+- last_name
 - password
+- email
+
+Table:
+
+```
+CREATE TABLE IF NOT EXISTS users(
+    id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+```
 
 #### Orders
 - id
-- id of each product in the order
-- quantity of each product in the order
+- product_id
+- product_qty
 - user_id
 - status of order (active or complete)
 
+```
+CREATE TABLE IF NOT EXISTS orders(
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id),
+    status INTEGER NOT NULL DEFAULT 0,
+    product_qty BIGINT NOT NULL DEFAULT 0,
+    product_id BIGINT NOT NULL REFERENCES products(id)
+);
+```
