@@ -114,6 +114,4 @@ export const attachUserRoutes = (app: Application) => {
   app.get("/users", verifyAuthToken, index);
   app.get("/users/:id", verifyAuthToken, show);
   app.post("/users", verifyAuthToken, create);
-  app.post("/users/login", login);
-  app.post("/users/signup", signup);
 };

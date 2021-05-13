@@ -13,7 +13,36 @@ Your application must make use of the following libraries:
 - jsonwebtoken from npm for working with JWTs
 - jasmine from npm for testing
 
-## Steps to Completion
+
+# Steps to Start the App
+
+* Create database `full_stack_dev` in postgres
+* Create a `.env` at the root of the project folder (same level as the `src` folder)
+* Add following information to the `.env` file:
+
+```dotenv
+POSTGRES_HOST=127.0.0.1
+POSTGRES_DB=full_stack_dev
+POSTGRES_TEST_DB=test
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+BCRYPT_PASSWORD=randomPassword
+SALT_ROUND=10
+TOKEN_SECRET=secret
+TEST_ENV=test
+```
+* Run `npm run migrate` or `yarn migrate`
+* Run `npm install` or `yarn install` to install all packages
+* Run `npm run build` to build the Javasript code  
+* Run `npm start` to start the server
+
+## Ports
+
+Server port: 3000
+
+Database port: 5432
+
+# Steps to Completion
 
 ### 1. Plan to Meet Requirements
 
