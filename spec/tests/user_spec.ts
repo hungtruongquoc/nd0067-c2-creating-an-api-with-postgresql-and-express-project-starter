@@ -26,10 +26,9 @@ describe("User Controller", () => {
     const response = await request.get('/users/1');
     expect(response.status).toBe(401);
   });
-  it ('create a user should not return 404 and 401', async () => {
+  it ('create a user should 401 by default', async () => {
     const response = await request.post('/users');
-    expect(response.status).not.toBe(401);
-    expect(response.status).not.toBe(404);
+    expect(response.status).toBe(400);
   });
   it('create should return a user', async () => {
     // Creates a user
