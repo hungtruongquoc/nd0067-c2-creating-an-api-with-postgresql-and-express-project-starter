@@ -68,3 +68,12 @@ CREATE TABLE IF NOT EXISTS orders(
     product_id BIGINT NOT NULL REFERENCES products(id)
 );
 ```
+
+```
+CREATE TABLE IF NOT EXISTS order_details(
+    id BIGSERIAL PRIMARY KEY,
+    order_id BIGINT REFERENCES orders(id),
+    product_id BIGINT REFERENCES products(id),
+    qty BIGINT NOT NULL DEFAULT 0
+);
+```
