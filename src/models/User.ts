@@ -90,19 +90,4 @@ export class User {
     }
     return null;
   }
-
-  async delete(id?: number): Promise<void> {
-    try {
-      const databaseConnection = await Client.connect();
-      if (id) {
-        await databaseConnection.query("DELETE FROM users WHERE id=$1", [id]);
-      }
-      else {
-        await databaseConnection.query("DELETE FROM users");
-      }
-      databaseConnection.release();
-    } catch (error) {
-      throw new Error(`Unable to delete user ${error}`);
-    }
-  }
 }

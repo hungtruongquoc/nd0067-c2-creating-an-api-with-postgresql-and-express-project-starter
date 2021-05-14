@@ -22,12 +22,12 @@ const login = async (_req: Request, _res: Response) => {
     });
   }
   const existingUserInDatabase = await userStore.authenticate(email, password);
-  if (existingUserInDatabase) {
+  if (existingUserInDatabase && existingUserInDatabase.id) {
+    const {id, email} = existingUserInDatabase;
     _res.status(200).send({
       status: "success",
-      token: generateJWTToken({
-        email: email
-      })
+      id: existingUserInDatabase.id,
+      token: generateJWTToken({email})
     });
   } else {
     _res.status(401).send({
