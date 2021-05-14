@@ -6,6 +6,13 @@ export enum OrderStatusTypes {
   STATUS_COMPLETED
 }
 
+export type OrderDetailType = {
+  id?: number;
+  order_id: number;
+  product_id: number;
+  qty: number;
+}
+
 export type OrderType = {
   id?: number;
   user_id: number;
@@ -14,38 +21,37 @@ export type OrderType = {
   product_qty?: number;
 };
 
-export class Order {
-  async markOrderComplete(orderId: number) {
-    try {
-      const connection = await Client.connect();
-      await connection.query("UPDATE orders SET status=1 WHERE id=$1;", [
-        orderId
-      ]);
-      connection.release();
-    } catch (error) {
-      throw new Error(`Unable to mark order complete by user ${error}`);
-    }
-  }
+export type OrderWithDetail = {
+  user_id: number;
+  order_id: number;
+  status?: OrderStatusTypes;
+  product_id?: number;
+  product_qty?: number;
+}
 
-  async findByUserId(id: number): Promise<OrderType[]> {
+export class Order {
+  async findByUserId(id: number): Promise<OrderWithDetail[]> {
     const connection = await Client.connect();
-    let ordersTable: QueryResult<OrderType>;
-    ordersTable = await connection.query("SELECT * FROM orders WHERE user_id = $1;", [id]);
+    let ordersTable: QueryResult<OrderWithDetail>;
+    const query = 'SELECT orders.user_id, order_details.order_id, orders.status, order_details.product_id, '
+        + 'order_details.qty AS product_qty '
+        + 'FROM orders LEFT JOIN order_details ON orders.id = order_details.id WHERE user_id = $1';
+    ordersTable = await connection.query(query, [id]);
     connection.release();
     return ordersTable.rows;
   }
 
-  async addProduct(quantity: number, orderId: number, productId: number): Promise<OrderType> {
+  async addProduct(quantity: number, orderId: number, productId: number): Promise<OrderDetailType> {
     let order: OrderType;
 
     try {
-      const orderSql = 'SELECT * FROM orders WHERE id=($1) RETURNING *'
-      const conn = await Client.connect()
-      const result = await conn.query(orderSql, [orderId])
-      order = result.rows[0]
-      conn.release()
+      const orderSql = 'SELECT * FROM orders WHERE id=$1';
+      const conn = await Client.connect();
+      const result = await conn.query(orderSql, [orderId]);
+      order = result.rows[0];
+      conn.release();
     } catch (err) {
-      throw new Error(`${err}`)
+      throw new Error(`${err}`);
     }
 
     if (OrderStatusTypes.STATUS_ACTIVE !== order.status) {
@@ -53,27 +59,27 @@ export class Order {
     }
 
     try {
-      const sql = 'INSERT INTO order_details (qty, order_id, product_id) VALUES($1, $2, $3) RETURNING *'
-      const conn = await Client.connect()
-      const result = await conn.query(sql, [quantity, orderId, productId])
-      const order = result.rows[0]
-      conn.release()
-      return order
+      const sql = 'INSERT INTO order_details (qty, order_id, product_id) VALUES($1, $2, $3) RETURNING *';
+      const conn = await Client.connect();
+      const result = await conn.query(sql, [quantity, orderId, productId]);
+      const order = result.rows[0];
+      conn.release();
+      return order;
     } catch (err) {
-      throw new Error(`Could not add product ${productId} to order ${orderId}: ${err}`)
+      throw new Error(`Could not add product ${productId} to order ${orderId}: ${err}`);
     }
   }
 
-  async create(o: OrderType): Promise<Order> {
+  async create(o: OrderType): Promise<OrderType> {
     try {
-      const sql = 'INSERT INTO orders (status, user_id) VALUES($1, $2) RETURNING *'
-      const conn = await Client.connect()
-      const result = await conn.query(sql, [o.status, o.user_id])
-      const order = result.rows[0]
-      conn.release()
-      return order
+      const sql = 'INSERT INTO orders (status, user_id) VALUES($1, $2) RETURNING *';
+      const conn = await Client.connect();
+      const result = await conn.query(sql, [o.status, o.user_id]);
+      const order = result.rows[0];
+      conn.release();
+      return order;
     } catch (err) {
-      throw new Error(`Could not add new order for ${o.user_id}. Error: ${err}`)
+      throw new Error(`Could not add new order for ${o.user_id}. Error: ${err}`);
     }
   }
 }
