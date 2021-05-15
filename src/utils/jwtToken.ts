@@ -11,7 +11,7 @@ export const generateJWTToken = (payload: UserPayloadInterface) => {
   });
 };
 
-export const verifyJWTToken = (payload: UserPayloadInterface | any) => {
+export const verifyJWTToken = (payload: string) => {
   const { TOKEN_SECRET } = process.env;
   return jwt.verify(payload, TOKEN_SECRET as string);
 };
