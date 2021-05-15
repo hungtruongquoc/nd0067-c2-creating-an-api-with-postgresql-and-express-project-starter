@@ -12,7 +12,7 @@ Your application must make use of the following libraries:
 - db-migrate from npm for migrations
 - jsonwebtoken from npm for working with JWTs
 - jasmine from npm for testing
-
+- Make sure you install Node `v15.14.0` to run the app and test properly
 
 # Steps to Start the App
 
@@ -32,8 +32,9 @@ TOKEN_SECRET=secret
 TEST_ENV=test
 ```
 * Run `npm run migrate` or `yarn migrate`
+* To run with the frontend and get some product data, run following command `npm run data:seed` or `yarn data:seed`  
 * Run `npm install` or `yarn install` to install all packages
-* Run `npm run build` to build the Javasript code  
+* Run `npm run build` to build the Javascript code  
 * Run `npm start` to start the server
 
 ## Ports
